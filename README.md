@@ -10,3 +10,20 @@
 ## Features
 * Encode Lua tables into JSON (JavaScript Object Notation) representation
 * Decode JSON (JavaScript Object Notation) representation into Lua tables (Coming soon)
+
+## Usage
+friend1 = {}
+friend1.name = "Sam"
+friend1.age = 13
+
+friend2 = {}
+friend2.name = "Ben"
+friend2.age = 12
+
+person = {}
+person.name = "Tom"
+person.age = 12
+person.friends = {friend1, friend2}
+
+json = json4lua.encode(person)
+print(json) -- {"name":"Tom","age":12,"friends":[{"name":"Sam","age":13},{"name":"Ben","age":12}]}
