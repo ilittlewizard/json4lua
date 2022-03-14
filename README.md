@@ -29,3 +29,19 @@ person.friends = {friend1, friend2}
 json = json4lua.encode(person)
 print(json) -- {"name":"Tom","age":12,"friends":[{"name":"Sam","age":13},{"name":"Ben","age":12}]}
 ```
+## Docs: Overview
+`json4lua`: A table that contains all the functions for this library
+
+`json4lua.config`: A table that contains all the configs for this library
+
+`json4lua.internal`: A table that contains all the internal functions for this library
+
+### Docs: `json4lua`
+`json4lua.encode(obj)`: A function used to encode Lua tables into JSON representation
+
+### Docs: `json4lua.config`
+`json4lua.config.ignore_unsupported_datatypes`: Determine whether the program should ignore (skip) values that cannot be encoded into JSON representation. 
+
+`json4lua.config.ignore_nonstring_keys`: Determine whether the program should ignore (skip) non-string keys. 
+
+`json4lua.config.ignore_nontable_inputs`: Determine whether the program should return `nil` if a non-table value is passed into `json4lua.encode(obj)`
