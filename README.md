@@ -12,6 +12,7 @@
 * Decode JSON (JavaScript Object Notation) representation into Lua tables (Coming soon)
 
 ## Usage
+```
 friend1 = {}
 friend1.name = "Sam"
 friend1.age = 13
@@ -27,3 +28,4 @@ person.friends = {friend1, friend2}
 
 json = json4lua.encode(person)
 print(json) -- {"name":"Tom","age":12,"friends":[{"name":"Sam","age":13},{"name":"Ben","age":12}]}
+```
