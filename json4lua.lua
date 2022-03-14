@@ -111,10 +111,3 @@ json4lua.encode = function(obj)
   json4lua.internal.encoder["table"](obj, out)
   return table.concat(out)
 end
-
-
-data = {e1={{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}}}, e2={{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}},{a={str="str", num=1, bool=true, arr={1, 2, 4, 8}}}}}
-for i=1, 50000 do
-  json4lua.encode(data)
-end
-print(json4lua.encode(data))
