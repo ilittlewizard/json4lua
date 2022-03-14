@@ -1,5 +1,12 @@
 if json4lua == nil then json4lua = {} end
 if json4lua.internal == nil then json4lua.internal = {} end
+if json4lua.config == nil then json4lua.config = {} end
+
+-- [[ Default Configuration ]] --
+json4lua.config.ignore_unsupported_datatypes = true;
+json4lua.config.ignore_nonstring_keys = true;
+json4lua.config.ignore_nontable_inputs = false;
+
 
 -- [[ Internal API ]] --
 json4lua.internal.escape_sequence = {
@@ -22,16 +29,20 @@ json4lua.internal.encoder = {
     out.write("null") 
   end,
   
-  ["table"] = function(tab, out)
+  ["table"] = function(tab, out, dejavu)
+    if dejavu[tab] then
+      error("Circular reference found")
+    end
+    dejavu[tab] = 0
     local i = 0
     for _ in pairs(tab) do
       i = i + 1
       if tab[i] == nil then 
-        json4lua.internal.write_object(tab, out)
+        json4lua.internal.write_object(tab, out, dejavu)
         return
       end
     end
-    json4lua.internal.write_array(tab, out)
+    json4lua.internal.write_array(tab, out, dejavu)
   end,
   
   ["string"] = function(str, out)
@@ -50,12 +61,15 @@ json4lua.internal.encoder = {
   end,
 }
 
-json4lua.internal.write_array = function(arr, out)
+json4lua.internal.write_array = function(arr, out, dejavu)
   table.insert(out, "[")
   first = true
   for k, v in ipairs(arr) do
     encoder = json4lua.internal.encoder[type(v)]
     if encoder == nil then
+      if json4lua.config.ignore_unsupported_datatypes == false then
+        error("Unsupported Datatype: " .. type(v))
+      end
       goto next
     end
     
@@ -65,22 +79,28 @@ json4lua.internal.write_array = function(arr, out)
       first = false;
     end
     
-    encoder(v, out)
+    encoder(v, out, dejavu)
     ::next::
   end
   table.insert(out, "]")
 end
 
-json4lua.internal.write_object = function(obj, out)
+json4lua.internal.write_object = function(obj, out, dejavu)
   table.insert(out, "{")
   first = true
   for k, v in pairs(obj) do
     if type(k) ~= "string" then
+      if json4lua.config.ignore_nonstring_keys == false then
+        error("Non-string key found: type = " .. type(v))
+      end
       goto next
     end
     
     encoder = json4lua.internal.encoder[type(v)]
     if encoder == nil then
+      if json4lua.config.ignore_unsupported_datatypes == false then
+        error("Unsupported Datatype: " .. type(v))
+      end
       goto next
     end
     
@@ -92,9 +112,9 @@ json4lua.internal.write_object = function(obj, out)
     
     table.insert(out, "\"")
     table.insert(out, json4lua.internal.escape(k))
-    table.insert(out, "\"")
+    table.insert(out, "\":")
     
-    encoder(v, out)
+    encoder(v, out, dejavu)
     ::next::
   end
   table.insert(out, "}")
@@ -102,12 +122,17 @@ end
 
 -- [[ Public API ]] --
 json4lua.encode = function(obj) 
-  if obj == nil then return nil end
   if type(obj) ~= "table" then
-    error(string.format("json4lua.encode expected type 'table', found '%s'", type(obj)))
+    if json4lua.config.ignore_nontable_inputs == false then
+      error(string.format("json4lua.encode expected type 'table', found '%s'", type(obj)))
+    end
   end
   
   local out = {""}
-  json4lua.internal.encoder["table"](obj, out)
+  json4lua.internal.encoder["table"](obj, out, {})
   return table.concat(out)
 end
+
+test = {}
+test.test = test
+print(json4lua.encode(test))
