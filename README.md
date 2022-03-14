@@ -44,4 +44,4 @@ print(json) -- {"name":"Tom","age":12,"friends":[{"name":"Sam","age":13},{"name"
 
 `json4lua.config.ignore_nonstring_keys`: Determine whether the program should ignore (skip) non-string keys. 
 
-`json4lua.config.ignore_nontable_inputs`: Determine whether the program should return `nil` if a non-table value is passed into json4lua.encode(obj)
+`json4lua.config.ignore_nontable_inputs`: Determine whether the program should return `nil` if a non-table value is passed into `json4lua.encode()`
