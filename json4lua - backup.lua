@@ -37,7 +37,7 @@ json4lua.internal.encoder = {
     local i = 0
     for _ in pairs(tab) do
       i = i + 1
-      if not tab[i] then 
+      if tab[i] == nil then 
         json4lua.internal.write_object(tab, out, dejavu)
         return
       end
@@ -68,7 +68,7 @@ json4lua.internal.write_array = function(arr, out, dejavu)
   for k=1, #arr do 
     local v = arr[k];
     encoder = json4lua.internal.encoder[type(v)]
-    if not encoder then
+    if encoder == nil then
       if json4lua.config.ignore_unsupported_datatypes == false then
         error("Unsupported Datatype: " .. type(v))
       end
@@ -99,7 +99,7 @@ json4lua.internal.write_object = function(obj, out, dejavu)
     end
     
     local encoder = json4lua.internal.encoder[type(v)]
-    if not encoder then
+    if encoder == nil then
       if json4lua.config.ignore_unsupported_datatypes == false then
         error("Unsupported Datatype: " .. type(v))
       end
@@ -123,19 +123,7 @@ json4lua.internal.write_object = function(obj, out, dejavu)
 end
 
 -- [[ Internal API: Decode ]] --
-json4lua.internal.ignored_token = {
-  [" "] = 0,
-  ["\n"] = 0,
-  ["\t"] = 0,
-  ["\r"] = 0,
-  ["\f"] = 0,
-}
-
 json4lua.internal.read_array = function(reader)
-  
-end
-
-json4lua.internal.read_object = function(reader)
   
 end
 
@@ -156,30 +144,12 @@ json4lua.decode = function(json)
   if type(json) ~= "string" then
     error(string.format("json4lua.decode expected type 'string', found '%s'", type(json)))
   end
-  
-  local reader = {}
-  reader.pos = 1
-  reader.next = function()
-    local c = string.sub(json, reader.pos, reader.pos)
-    reader.pos = reader.pos + 1
-    return c
+  local index = 0
+  local reader = function()
+    index = index + 1
+    return string.sub(json, index, index)
   end
-  reader.error = function(msg)
-    error(msg .. " at position" .. reader.pos)
-  end
-  
-  local first;
-  repeat
-   first = reader.next()
-  until not json4lua.internal.ignored_token[first]
-  
-  if first == "{" then
-    return json4lua.internal.read_object(reader)
-  elseif first == "[" then
-    return json4lua.internal.read_array(reader)
-  else
-    reader.error("Unexpected token " + first)
-  end
+  return json4lua.internal.read_
 end
 
 friend1 = {}
@@ -195,4 +165,7 @@ person.name = "Tom"
 person.age = 12
 person.friends = {friend1, friend2}
 
-print(json4lua.decode('{}'))
+for i=1, 100000 do
+  json4lua.encode(person);
+end
+print(json4lua.encode(person))
